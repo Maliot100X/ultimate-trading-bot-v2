@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs'; // Force Node.js runtime
-
 export async function GET(request: Request) {
   try {
     console.log('=== GMGN API CALL ===');

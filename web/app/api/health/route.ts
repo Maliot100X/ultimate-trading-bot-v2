@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs'; // Force Node.js runtime instead of Edge
-
 export async function GET() {
   const envVars = {
     GMGN_API_KEY: process.env.GMGN_API_KEY,
@@ -26,7 +24,6 @@ export async function GET() {
     status: 'ok',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'production',
-    runtime: 'nodejs',
     all_envs: {
       GMGN_API_KEY: !!envVars.GMGN_API_KEY,
       GMGN_API_KEY_VALUE: envVars.GMGN_API_KEY ? 'HIDDEN' : 'MISSING',
