@@ -8,6 +8,11 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'trending';
 
+    console.log('=== GMGN API CALL ===');
+    console.log('Action:', action);
+    console.log('GMGN_API_URL:', GMGN_API_URL);
+    console.log('GMGN_API_KEY:', GMGN_API_KEY ? 'SET' : 'NOT SET');
+
     let apiUrl = '';
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -15,6 +20,7 @@ export async function GET(request: Request) {
 
     if (GMGN_API_KEY) {
       headers['X-API-Key'] = GMGN_API_KEY;
+      console.log('Added X-API-Key header');
     }
 
     if (action === 'trending') {
@@ -37,19 +43,33 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
+    console.log('Fetching from:', apiUrl);
+    console.log('Headers:', headers);
+
     const response = await fetch(apiUrl, { headers });
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
     const data = await response.json();
+    console.log('Response data type:', typeof data);
+    console.log('Response data keys:', typeof data === 'object' ? Object.keys(data) : 'N/A');
 
     return NextResponse.json({
       success: true,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      debug: {
+        apiUrl,
+        hasApiKey: !!GMGN_API_KEY,
+        responseStatus: response.status
+      }
     });
   } catch (error) {
     console.error('GMGN API Error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch from GMGN API'
+      error: 'Failed to fetch from GMGN API',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
