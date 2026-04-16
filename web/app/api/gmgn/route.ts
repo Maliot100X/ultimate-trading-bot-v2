@@ -66,7 +66,7 @@ const TRENDING_TOKENS = [
     tags: ["meme", "pump-fun"]
   },
   {
-    address: "RAYzmP5e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L7L7L",
+    address: "RAYzmP5e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L7L",
     symbol: "RAY",
     name: "Raydium",
     price: 1.85,
