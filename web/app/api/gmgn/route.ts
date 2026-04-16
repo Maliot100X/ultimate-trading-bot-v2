@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const GMGN_API_URL = process.env.GMGN_API_URL || 'https://api.gmgn.ai';
+const JUPITER_API_URL = process.env.JUPITER_API_URL || 'https://quote-api.jup.ag';
 const GMGN_API_KEY = process.env.GMGN_API_KEY;
 
 export async function GET(request: Request) {
@@ -8,67 +8,132 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'trending';
 
-    console.log('=== GMGN API CALL ===');
+    console.log('=== TOKEN API CALL ===');
     console.log('Action:', action);
-    console.log('GMGN_API_URL:', GMGN_API_URL);
-    console.log('GMGN_API_KEY:', GMGN_API_KEY ? 'SET' : 'NOT SET');
 
-    let apiUrl = '';
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
+    // FALLBACK: Use Jupiter API for real token data
+    // Since GMGN API might not be accessible from Vercel due to network restrictions
+    if (action === 'trending' || action === 'tokens') {
+      // Get trending/volume tokens from Jupiter
+      const jupiterUrl = `${JUPITER_API_URL}/v6/tokens`;
 
-    if (GMGN_API_KEY) {
-      headers['X-API-Key'] = GMGN_API_KEY;
-      console.log('Added X-API-Key header');
+      console.log('Fetching from Jupiter:', jupiterUrl);
+
+      const response = await fetch(jupiterUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Jupiter API error: ${response.status}`);
+      }
+
+      const jupiterData = await response.json();
+
+      // Transform Jupiter data to match expected format
+      const tokens = Array.isArray(jupiterData) ? jupiterData.slice(0, 50) : [];
+
+      const formattedData = {
+        success: true,
+        data: {
+          data: tokens.map(token => ({
+            address: token.address,
+            symbol: token.symbol,
+            name: token.name,
+            price: parseFloat(token.price || '0'),
+            liquidity: parseFloat(token.liquidity || '0'),
+            volume_24h: parseFloat(token.volume || '0'),
+            change_24h: parseFloat(token.change24h || '0'),
+            decimals: token.decimals || 9,
+            logoURI: token.logoURI || null,
+            tags: token.tags || []
+          }))
+        },
+        timestamp: new Date().toISOString(),
+        source: 'Jupiter API',
+        fallback: true
+      };
+
+      console.log(`✅ Retrieved ${tokens.length} tokens from Jupiter`);
+
+      return NextResponse.json(formattedData);
     }
 
-    if (action === 'trending') {
-      apiUrl = `${GMGN_API_URL}/v1/ranking/solana`;
-    } else if (action === 'token') {
+    if (action === 'token') {
       const address = searchParams.get('address');
       if (!address) {
         return NextResponse.json({ error: 'Token address required' }, { status: 400 });
       }
-      apiUrl = `${GMGN_API_URL}/v2/token_info/${address}?address=${address}`;
-    } else if (action === 'trades') {
+
+      // Get specific token info from Jupiter
+      const jupiterUrl = `${JUPITER_API_URL}/v6/tokens`;
+
+      const response = await fetch(jupiterUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Jupiter API error: ${response.status}`);
+      }
+
+      const jupiterData = await response.json();
+      const token = Array.isArray(jupiterData)
+        ? jupiterData.find(t => t.address === address)
+        : null;
+
+      if (!token) {
+        return NextResponse.json({ error: 'Token not found' }, { status: 404 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          address: token.address,
+          symbol: token.symbol,
+          name: token.name,
+          price: parseFloat(token.price || '0'),
+          liquidity: parseFloat(token.liquidity || '0'),
+          volume_24h: parseFloat(token.volume || '0'),
+          change_24h: parseFloat(token.change24h || '0'),
+          decimals: token.decimals || 9,
+          logoURI: token.logoURI || null,
+          tags: token.tags || []
+        },
+        timestamp: new Date().toISOString(),
+        source: 'Jupiter API'
+      });
+    }
+
+    if (action === 'trades') {
       const address = searchParams.get('address');
       if (!address) {
         return NextResponse.json({ error: 'Token address required' }, { status: 400 });
       }
-      apiUrl = `${GMGN_API_URL}/v1/token_trades/${address}?address=${address}`;
+
+      // Real trade data would come from a different API (e.g., Birdeye, Helius)
+      // For now, return empty array with structure
+      return NextResponse.json({
+        success: true,
+        data: {
+          address,
+          trades: [],
+          count: 0
+        },
+        timestamp: new Date().toISOString(),
+        note: 'Trade history requires additional API integration (Birdeye, Helius)'
+      });
     }
 
-    if (!apiUrl) {
-      return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-    }
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 
-    console.log('Fetching from:', apiUrl);
-    console.log('Headers:', headers);
-
-    const response = await fetch(apiUrl, { headers });
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-    const data = await response.json();
-    console.log('Response data type:', typeof data);
-    console.log('Response data keys:', typeof data === 'object' ? Object.keys(data) : 'N/A');
-
-    return NextResponse.json({
-      success: true,
-      data,
-      timestamp: new Date().toISOString(),
-      debug: {
-        apiUrl,
-        hasApiKey: !!GMGN_API_KEY,
-        responseStatus: response.status
-      }
-    });
   } catch (error) {
-    console.error('GMGN API Error:', error);
+    console.error('Token API Error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch from GMGN API',
+      error: 'Failed to fetch token data',
       errorMessage: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
