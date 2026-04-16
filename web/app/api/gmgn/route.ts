@@ -1,163 +1,165 @@
 import { NextResponse } from 'next/server';
 
-const SOLANA_PUBLIC_KEY = process.env.SOLANA_PUBLIC_KEY;
-const SOLANA_PRIVATE_KEY = process.env.SOLANA_PRIVATE_KEY;
-
-// Sample trending tokens (would normally come from GMGN/Jupiter API)
-const TRENDING_TOKENS = [
-  {
-    address: "So11111111111111111111111111111111111111112",
-    symbol: "SOL",
-    name: "Solana",
-    price: 146.50,
-    liquidity: 50000000,
-    volume_24h: 250000000,
-    change_24h: 5.2,
-    decimals: 9,
-    logoURI: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
-    tags: ["native", "verified"]
-  },
-  {
-    address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-    symbol: "USDC",
-    name: "USD Coin",
-    price: 1.00,
-    liquidity: 150000000,
-    volume_24h: 80000000,
-    change_24h: 0.1,
-    decimals: 6,
-    logoURI: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
-    tags: ["stablecoin", "verified"]
-  },
-  {
-    address: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
-    symbol: "USDT",
-    name: "Tether USD",
-    price: 1.00,
-    liquidity: 120000000,
-    volume_24h: 65000000,
-    change_24h: 0.0,
-    decimals: 6,
-    logoURI: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png",
-    tags: ["stablecoin", "verified"]
-  },
-  {
-    address: "Bonk1wGx9qK3z6oqNvY9zH1mZ2X4Y5Z6Z7Z8Z9Z0Z1Z2",
-    symbol: "BONK",
-    name: "Bonk",
-    price: 0.0000245,
-    liquidity: 25000000,
-    volume_24h: 15000000,
-    change_24h: 12.5,
-    decimals: 5,
-    logoURI: null,
-    tags: ["meme", "pump-fun"]
-  },
-  {
-    address: "WIFzP9ADm7F5R5R5R5R5R5R5R5R5R5R5R5R5R5R5R5",
-    symbol: "WIF",
-    name: "dogwifhat",
-    price: 2.45,
-    liquidity: 35000000,
-    volume_24h: 28000000,
-    change_24h: -3.2,
-    decimals: 6,
-    logoURI: null,
-    tags: ["meme", "pump-fun"]
-  },
-  {
-    address: "RAYzmP5e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L7L",
-    symbol: "RAY",
-    name: "Raydium",
-    price: 1.85,
-    liquidity: 18000000,
-    volume_24h: 12000000,
-    change_24h: 8.7,
-    decimals: 6,
-    logoURI: null,
-    tags: ["dex", "verified"]
-  },
-  {
-    address: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
-    symbol: "JUP",
-    name: "Jupiter",
-    price: 1.12,
-    liquidity: 22000000,
-    volume_24h: 18000000,
-    change_24h: 4.3,
-    decimals: 6,
-    logoURI: null,
-    tags: ["dex", "verified"]
-  }
-];
+export const runtime = 'nodejs'; // Force Node.js runtime
 
 export async function GET(request: Request) {
   try {
+    console.log('=== GMGN API CALL ===');
+    console.log('GMGN_API_KEY:', process.env.GMGN_API_KEY ? 'Present' : 'Missing');
+
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'trending';
 
-    console.log('=== TOKEN API CALL ===');
-    console.log('Action:', action);
-
-    if (action === 'trending' || action === 'tokens') {
+    if (!process.env.GMGN_API_KEY) {
       return NextResponse.json({
-        success: true,
-        data: {
-          data: TRENDING_TOKENS
-        },
-        timestamp: new Date().toISOString(),
-        source: 'Cached Trending Data',
-        note: 'Live API access requires server with internet connectivity'
+        success: false,
+        error: 'GMGN API key not configured',
+        data: null,
+        timestamp: new Date().toISOString()
       });
     }
 
-    if (action === 'token') {
-      const address = searchParams.get('address');
-      if (!address) {
-        return NextResponse.json({ error: 'Token address required' }, { status: 400 });
-      }
-
-      const token = TRENDING_TOKENS.find(t => t.address === address);
-
-      if (!token) {
-        return NextResponse.json({ error: 'Token not found in cached data' }, { status: 404 });
-      }
+    // Simulated GMGN data since external APIs are unreachable from this server
+    if (action === 'trending') {
+      const trendingTokens = [
+        {
+          address: "So11111111111111111111111111111111111111112",
+          symbol: "SOL",
+          name: "Solana",
+          price: 146.50,
+          priceChange24h: 5.2,
+          volume24h: 1520000000,
+          marketCap: 64000000000,
+          liquidity: 890000000,
+          holders: 850000,
+          fdv: 64000000000
+        },
+        {
+          address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          symbol: "USDC",
+          name: "USD Coin",
+          price: 1.00,
+          priceChange24h: 0.0,
+          volume24h: 890000000,
+          marketCap: 52000000000,
+          liquidity: 52000000000,
+          holders: 1200000,
+          fdv: 52000000000
+        },
+        {
+          address: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+          symbol: "USDT",
+          name: "Tether",
+          price: 1.00,
+          priceChange24h: 0.0,
+          volume24h: 750000000,
+          marketCap: 49000000000,
+          liquidity: 49000000000,
+          holders: 980000,
+          fdv: 49000000000
+        },
+        {
+          address: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+          symbol: "BONK",
+          name: "Bonk",
+          price: 0.0000245,
+          priceChange24h: 12.8,
+          volume24h: 45000000,
+          marketCap: 1400000000,
+          liquidity: 85000000,
+          holders: 650000,
+          fdv: 1400000000
+        },
+        {
+          address: "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+          symbol: "WIF",
+          name: "dogwifhat",
+          price: 2.45,
+          priceChange24h: -3.2,
+          volume24h: 280000000,
+          marketCap: 2450000000,
+          liquidity: 120000000,
+          holders: 450000,
+          fdv: 2450000000
+        },
+        {
+          address: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+          symbol: "JUP",
+          name: "Jupiter",
+          price: 0.75,
+          priceChange24h: 8.4,
+          volume24h: 52000000,
+          marketCap: 750000000,
+          liquidity: 95000000,
+          holders: 280000,
+          fdv: 750000000
+        },
+        {
+          address: "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+          symbol: "RAY",
+          name: "Raydium",
+          price: 1.49,
+          priceChange24h: 4.7,
+          volume24h: 38000000,
+          marketCap: 390000000,
+          liquidity: 65000000,
+          holders: 195000,
+          fdv: 390000000
+        }
+      ];
 
       return NextResponse.json({
         success: true,
-        data: token,
+        data: {
+          action,
+          count: trendingTokens.length,
+          data: trendingTokens
+        },
         timestamp: new Date().toISOString(),
-        source: 'Cached Token Data'
+        source: 'Simulated GMGN Data',
+        note: 'Live GMGN data requires server with external API connectivity'
       });
     }
 
     if (action === 'search') {
-      const query = searchParams.get('q')?.toLowerCase();
-      if (!query) {
-        return NextResponse.json({ error: 'Search query required' }, { status: 400 });
-      }
+      const query = searchParams.get('query') || '';
+      const allTokens = [
+        { address: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", symbol: "BONK", name: "Bonk", price: 0.0000245 },
+        { address: "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm", symbol: "WIF", name: "dogwifhat", price: 2.45 },
+        { address: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN", symbol: "JUP", name: "Jupiter", price: 0.75 },
+      ];
 
-      const results = TRENDING_TOKENS.filter(t =>
-        t.symbol.toLowerCase().includes(query) ||
-        t.name.toLowerCase().includes(query)
+      const filtered = allTokens.filter(t =>
+        t.symbol.toLowerCase().includes(query.toLowerCase()) ||
+        t.name.toLowerCase().includes(query.toLowerCase())
       );
 
       return NextResponse.json({
         success: true,
-        data: results,
-        timestamp: new Date().toISOString(),
-        source: 'Cached Search Results'
+        data: {
+          action,
+          query,
+          count: filtered.length,
+          data: filtered
+        },
+        timestamp: new Date().toISOString()
       });
     }
 
-    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-
-  } catch (error) {
-    console.error('Token API Error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch token data',
-      errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Invalid action',
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('GMGN API Error:', error);
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to fetch GMGN data',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      data: null,
+      timestamp: new Date().toISOString()
     }, { status: 500 });
   }
 }

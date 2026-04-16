@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 
-const SOLANA_PUBLIC_KEY = process.env.SOLANA_PUBLIC_KEY;
+export const runtime = 'nodejs'; // Force Node.js runtime
 
 export async function GET() {
   try {
     console.log('=== PORTFOLIO API CALL ===');
+    console.log('SOLANA_PUBLIC_KEY:', process.env.SOLANA_PUBLIC_KEY);
 
-    if (!SOLANA_PUBLIC_KEY) {
-      console.log('No SOLANA_PUBLIC_KEY in environment');
+    if (!process.env.SOLANA_PUBLIC_KEY) {
       return NextResponse.json({
         success: false,
         error: 'Solana public key not configured',
@@ -21,15 +21,13 @@ export async function GET() {
       });
     }
 
-    console.log('Public Key:', SOLANA_PUBLIC_KEY);
-
     // Since we can't access external APIs from this server environment,
     // we'll return a realistic portfolio structure based on the configured wallet
     // In production, this would make RPC calls to get real balances
 
     return NextResponse.json({
       success: true,
-      publicKey: SOLANA_PUBLIC_KEY,
+      publicKey: process.env.SOLANA_PUBLIC_KEY,
       balance: '10.5', // Simulated SOL balance
       balanceUsd: '1538.25', // 10.5 * $146.50
       tokens: [

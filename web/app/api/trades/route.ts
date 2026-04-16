@@ -1,122 +1,108 @@
 import { NextResponse } from 'next/server';
 
-const SOLANA_PUBLIC_KEY = process.env.SOLANA_PUBLIC_KEY;
-
-// Sample trade history (would normally come from database or API)
-const SAMPLE_TRADES = [
-  {
-    id: "trade_001",
-    timestamp: "2026-04-16T14:32:15Z",
-    type: "buy",
-    token: {
-      address: "Bonk1wGx9qK3z6oqNvY9zH1mZ2X4Y5Z6Z7Z8Z9Z0Z1Z2",
-      symbol: "BONK",
-      name: "Bonk"
-    },
-    amount: 5000000,
-    price: 0.0000245,
-    valueUsd: 122.50,
-    txId: "5H7j8k9L0m1N2o3P4q5R6s7T8u9V0wX1Y2z3A4b5C6",
-    status: "completed"
-  },
-  {
-    id: "trade_002",
-    timestamp: "2026-04-16T15:45:22Z",
-    type: "sell",
-    token: {
-      address: "WIFzP9e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L7L7L",
-      symbol: "WIF",
-      name: "dogwifhat"
-    },
-    amount: 50,
-    price: 2.50,
-    valueUsd: 125.00,
-    txId: "7K9l0m1N2o3P4q5R6s7T8u9V0wX1Y2z3A4b5C6D7e8",
-    status: "completed",
-    pnlUsd: 15.00,
-    pnlPercent: 12.0
-  },
-  {
-    id: "trade_003",
-    timestamp: "2026-04-16T16:22:08Z",
-    type: "buy",
-    token: {
-      address: "RAYzmP5e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L7L",
-      symbol: "RAY",
-      name: "Raydium"
-    },
-    amount: 75,
-    price: 1.82,
-    valueUsd: 136.50,
-    txId: "9M1n2o3P4q5R6s7T8u9V0wX1Y2z3A4b5C6D7e8F9g0",
-    status: "completed"
-  },
-  {
-    id: "trade_004",
-    timestamp: "2026-04-16T17:10:33Z",
-    type: "buy",
-    token: {
-      address: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
-      symbol: "JUP",
-      name: "Jupiter"
-    },
-    amount: 100,
-    price: 1.15,
-    valueUsd: 115.00,
-    txId: "2o3P4q5R6s7T8u9V0wX1Y2z3A4b5C6D7e8F9g0H1i2",
-    status: "completed"
-  }
-];
+export const runtime = 'nodejs'; // Force Node.js runtime
 
 export async function GET() {
   try {
     console.log('=== TRADES API CALL ===');
+    console.log('SOLANA_PUBLIC_KEY:', process.env.SOLANA_PUBLIC_KEY);
 
-    if (!SOLANA_PUBLIC_KEY) {
-      console.log('No SOLANA_PUBLIC_KEY in environment');
+    if (!process.env.SOLANA_PUBLIC_KEY) {
       return NextResponse.json({
         success: false,
-        error: 'Wallet not configured',
+        error: 'Solana public key not configured',
         trades: [],
         count: 0,
         stats: null,
-        timestamp: new Date().toISOString(),
-        note: 'Configure SOLANA_PUBLIC_KEY in Vercel environment variables'
+        timestamp: new Date().toISOString()
       });
     }
 
-    console.log('Public Key:', SOLANA_PUBLIC_KEY);
-
-    // Calculate trade statistics
-    const completedTrades = SAMPLE_TRADES.filter(t => t.status === 'completed');
-    const buyTrades = completedTrades.filter(t => t.type === 'buy');
-    const sellTrades = completedTrades.filter(t => t.type === 'sell');
-
-    const totalVolume = completedTrades.reduce((sum, t) => sum + t.valueUsd, 0);
-    const totalPnL = sellTrades.reduce((sum, t) => sum + (t.pnlUsd || 0), 0);
-    const winRate = sellTrades.length > 0
-      ? (sellTrades.filter(t => (t.pnlUsd || 0) > 0).length / sellTrades.length) * 100
-      : 0;
+    // Simulated trade history for demo purposes
+    // In production, this would fetch from a database or on-chain transactions
+    const trades = [
+      {
+        id: '1',
+        timestamp: '2026-04-16T18:30:00Z',
+        token: {
+          address: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+          symbol: 'JUP',
+          name: 'Jupiter'
+        },
+        type: 'buy',
+        amount: 150.0,
+        amountUsd: '150.00',
+        price: 0.75,
+        pnl: 22.5,
+        pnlPercent: 15.0,
+        status: 'completed'
+      },
+      {
+        id: '2',
+        timestamp: '2026-04-16T17:45:00Z',
+        token: {
+          address: 'RAYzmP5e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L7L',
+          symbol: 'RAY',
+          name: 'Raydium'
+        },
+        type: 'buy',
+        amount: 100.0,
+        amountUsd: '149.00',
+        price: 1.49,
+        pnl: 12.5,
+        pnlPercent: 8.4,
+        status: 'completed'
+      },
+      {
+        id: '3',
+        timestamp: '2026-04-16T16:20:00Z',
+        token: {
+          address: 'WIFzP9e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L7L',
+          symbol: 'WIF',
+          name: 'dogwifhat'
+        },
+        type: 'sell',
+        amount: 50.0,
+        amountUsd: '122.50',
+        price: 2.45,
+        pnl: 30.0,
+        pnlPercent: 32.4,
+        status: 'completed'
+      },
+      {
+        id: '4',
+        timestamp: '2026-04-16T15:10:00Z',
+        token: {
+          address: 'BONKzP9e77KJ3h7L7L7L7L7L7L7L7L7L7L7L7L7L',
+          symbol: 'BONK',
+          name: 'Bonk'
+        },
+        type: 'buy',
+        amount: 5000000.0,
+        amountUsd: '77.50',
+        price: 0.0000155,
+        pnl: 8.5,
+        pnlPercent: 10.9,
+        status: 'completed'
+      }
+    ];
 
     const stats = {
-      totalTrades: completedTrades.length,
-      buyTrades: buyTrades.length,
-      sellTrades: sellTrades.length,
-      totalVolume: totalVolume,
-      totalPnL: totalPnL,
-      winRate: winRate.toFixed(1),
-      avgTradeSize: completedTrades.length > 0 ? totalVolume / completedTrades.length : 0
+      totalTrades: trades.length,
+      totalVolume: '499.00',
+      totalPnl: '73.50',
+      winRate: 100.0,
+      avgPnlPercent: 16.7
     };
 
     return NextResponse.json({
       success: true,
-      publicKey: SOLANA_PUBLIC_KEY,
-      trades: SAMPLE_TRADES.reverse(), // Most recent first
-      count: SAMPLE_TRADES.length,
-      stats: stats,
+      trades,
+      count: trades.length,
+      stats,
       timestamp: new Date().toISOString(),
-      source: 'Trade History Database (Simulated)',
-      note: 'Live trade history requires database connection'
+      source: 'Simulated Trades History',
+      note: 'Live trade history requires database or on-chain transaction tracking'
     });
 
   } catch (error) {
@@ -127,6 +113,7 @@ export async function GET() {
       errorMessage: error instanceof Error ? error.message : 'Unknown error',
       trades: [],
       count: 0,
+      stats: null,
       timestamp: new Date().toISOString()
     }, { status: 500 });
   }
