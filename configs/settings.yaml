@@ -1,0 +1,290 @@
+# ULTIMATE TRADING BOT - COMPLETE CONFIGURATION
+# All strategies enabled, all capabilities active
+
+bot:
+  name: "UltimateTradingBot"
+  version: "1.0.0"
+  environment: "production"
+  log_level: "INFO"
+  
+  # ALL strategies enabled
+  strategies:
+    enabled:
+      - pumpfun_sniper
+      - gmgn_alpha
+      - multi_strategy_portfolio
+      - hybrid_signal_aggregator
+      - ai_pattern_recognition
+      - advanced_risk_dashboard
+      - social_signal_amplifier
+      - portfolio_auto_rebalancer
+      - smart_money_copy_trade
+      - time_based_scheduler
+    
+    # Strategy weights (sum to 1.0)
+    weights:
+      pumpfun_sniper: 0.15
+      gmgn_alpha: 0.15
+      multi_strategy_portfolio: 0.10
+      hybrid_signal_aggregator: 0.10
+      ai_pattern_recognition: 0.10
+      advanced_risk_dashboard: 0.05
+      social_signal_amplifier: 0.10
+      portfolio_auto_rebalancer: 0.10
+      smart_money_copy_trade: 0.10
+      time_based_scheduler: 0.05
+  
+  # Risk management
+  risk:
+    max_position_size_usd: 1000
+    max_total_exposure_usd: 5000
+    max_daily_loss_usd: 500
+    max_drawdown_percent: 20
+    stop_loss_default: 10  # 10% stop loss
+    take_profit_default: 25  # 25% take profit
+    trailing_stop_activation: 15  # Activate trailing stop at 15% profit
+    trailing_stop_distance: 5  # 5% trailing distance
+    
+  # Execution
+  execution:
+    default_slippage_bps: 50  # 0.5%
+    max_slippage_bps: 200  # 2%
+    priority_fee_micro_lamports: 100000  # 0.1 SOL
+    use_jito: true
+    jito_tip_percent: 0.1  # 0.1% of trade value
+    max_retries: 3
+    retry_delay_seconds: 2
+    
+  # Chains supported
+  chains:
+    - solana
+    - bsc
+    - base
+    - ethereum
+    
+  # Data sources
+  data_sources:
+    gmgn:
+      enabled: true
+      api_version: "v1"
+      polling_interval_seconds: 30
+      
+    pumpfun:
+      enabled: true
+      rpc_endpoint: "https://api.mainnet-beta.solana.com"
+      ws_endpoint: "wss://api.mainnet-beta.solana.com"
+      
+    jupiter:
+      enabled: true
+      api_version: "v6"
+      
+    dexscreener:
+      enabled: true
+      
+    birdeye:
+      enabled: true
+      
+    moralis:
+      enabled: true
+      
+  # Telegram bot
+  telegram:
+    enabled: true
+    polling_interval: 1
+    admin_user_ids: []  # Add your Telegram user ID here
+    
+  # Web dashboard
+  web:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8000
+    auth_required: true
+    
+  # Database
+  database:
+    type: "postgresql"
+    host: "localhost"
+    port: 5432
+    name: "trading_bot"
+    user: "bot_user"
+    password: ""  # Set in environment
+    
+  # Redis for caching
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+    
+  # Alerting
+  alerts:
+    telegram: true
+    email: false
+    webhook: false
+    
+  # Monitoring
+  monitoring:
+    prometheus: true
+    grafana: true
+    health_check_interval: 60
+    
+  # Backtesting
+  backtesting:
+    enabled: true
+    historical_data_days: 30
+    initial_balance_usd: 10000
+    
+  # Auto-update
+  auto_update:
+    enabled: true
+    check_interval_hours: 24
+    
+# GMGN specific configuration
+gmgn:
+  api_key: ""  # Set in environment
+  endpoints:
+    market_rank: "/v1/market/rank"
+    token_info: "/v1/token/info"
+    token_security: "/v1/token/security"
+    token_pool: "/v1/token/pool"
+    token_holders: "/v1/token/holders"
+    token_traders: "/v1/token/traders"
+    market_kline: "/v1/market/kline"
+    market_trending: "/v1/market/trending"
+    portfolio_holdings: "/v1/portfolio/holdings"
+    portfolio_activity: "/v1/portfolio/activity"
+    portfolio_stats: "/v1/portfolio/stats"
+    track_wallet: "/v1/track/wallet"
+    swap_market_order: "/v1/swap/market-order"
+    swap_limit_order: "/v1/swap/limit-order"
+    swap_strategy_order: "/v1/swap/strategy-order"
+    cooking_buy_tp_sl: "/v1/cooking/buy-tp-sl"
+    
+  # Filters for token scanning
+  filters:
+    min_liquidity_usd: 10000
+    max_rug_ratio: 0.3
+    min_holder_count: 100
+    max_top_10_holder_rate: 0.4
+    min_smart_degen_count: 3
+    exclude_honeypot: true
+    exclude_wash_trading: true
+    exclude_rat_traders: true
+    
+# Pump.fun sniper configuration
+pumpfun:
+  sniper:
+    enabled: true
+    check_interval_seconds: 5
+    max_snipe_delay_ms: 1000
+    buy_slippage_bps: 100  # 1%
+    initial_buy_percent: 0.5  # 50% of allocation
+    follow_up_buy_percent: 0.3  # 30% more if successful
+    stop_loss_percent: 15
+    take_profit_percent: 50
+    trailing_stop_percent: 10
+    
+  # Token creation detection
+  token_creation:
+    monitor_new_tokens: true
+    max_age_minutes: 5
+    min_initial_liquidity_sol: 1
+    max_initial_liquidity_sol: 100
+    
+  # Graduation detection
+  graduation:
+    monitor_graduations: true
+    graduation_buffer_percent: 5
+    
+# Solana configuration
+solana:
+  rpc_endpoints:
+    - "https://api.mainnet-beta.solana.com"
+    - "https://solana-api.projectserum.com"
+    - "https://rpc.ankr.com/solana"
+    
+  ws_endpoints:
+    - "wss://api.mainnet-beta.solana.com"
+    - "wss://solana-api.projectserum.com"
+    
+  commitment: "confirmed"
+  skip_preflight: false
+  max_retries: 3
+  
+# Wallet configuration
+wallets:
+  primary:
+    name: "Primary Trading Wallet"
+    chain: "solana"
+    private_key_env: "SOLANA_PRIVATE_KEY"
+    
+  secondary:
+    name: "Sniper Wallet"
+    chain: "solana"
+    private_key_env: "SOLANA_SNIPER_KEY"
+    
+  evm:
+    name: "EVM Wallet"
+    chain: "bsc,base,ethereum"
+    private_key_env: "EVM_PRIVATE_KEY"
+    
+# Telegram commands configuration
+telegram_commands:
+  enabled: true
+  prefix: "/"
+  
+  commands:
+    start:
+      description: "Start the bot"
+      admin_only: false
+      
+    status:
+      description: "Check bot status"
+      admin_only: false
+      
+    portfolio:
+      description: "View portfolio"
+      admin_only: false
+      
+    positions:
+      description: "View open positions"
+      admin_only: false
+      
+    trades:
+      description: "View recent trades"
+      admin_only: false
+      
+    alerts:
+      description: "Manage alerts"
+      admin_only: false
+      
+    sniper:
+      description: "Control pump.fun sniper"
+      admin_only: true
+      
+    strategy:
+      description: "Manage strategies"
+      admin_only: true
+      
+    risk:
+      description: "Risk management settings"
+      admin_only: true
+      
+    stop:
+      description: "Stop all trading"
+      admin_only: true
+      
+    restart:
+      description: "Restart the bot"
+      admin_only: true
+      
+    logs:
+      description: "View logs"
+      admin_only: true
+      
+    config:
+      description: "View/modify config"
+      admin_only: true
+      
+    help:
+      description: "Show help"
+      admin_only: false

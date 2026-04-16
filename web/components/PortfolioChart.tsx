@@ -1,0 +1,1 @@
+export default function PortfolioChart() { return <div className='h-64 flex items-center justify-center text-gray-400'>Portfolio Chart - Coming Soon</div> }

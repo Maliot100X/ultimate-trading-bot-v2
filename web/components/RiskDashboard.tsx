@@ -1,0 +1,1 @@
+export default function RiskDashboard() { return <div className='h-64 flex items-center justify-center text-gray-400'>Risk Dashboard - Coming Soon</div> }

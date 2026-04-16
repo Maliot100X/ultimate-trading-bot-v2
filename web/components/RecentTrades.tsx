@@ -1,0 +1,1 @@
+export default function RecentTrades() { return <div className='h-64 flex items-center justify-center text-gray-400'>Recent Trades - Coming Soon</div> }

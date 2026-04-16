@@ -1,0 +1,1 @@
+export default function StrategyPerformance() { return <div className='h-64 flex items-center justify-center text-gray-400'>Strategy Performance - Coming Soon</div> }

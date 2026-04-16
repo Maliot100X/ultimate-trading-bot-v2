@@ -1,0 +1,7 @@
+python-telegram-bot==20.7
+aiogram==3.0.0
+asyncio
+aiohttp
+python-dotenv
+pyyaml
+redis

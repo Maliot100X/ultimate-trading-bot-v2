@@ -1,0 +1,202 @@
+# TELEGRAM BOT COMMANDS CONFIGURATION
+
+commands:
+  # Basic Commands
+  start:
+    description: "Start the bot and show welcome message"
+    usage: "/start"
+    access: "all"
+  
+  help:
+    description: "Show help message with all commands"
+    usage: "/help"
+    access: "all"
+  
+  status:
+    description: "Check bot status and health"
+    usage: "/status"
+    access: "all"
+  
+  # Portfolio & Trading
+  portfolio:
+    description: "View current portfolio with positions"
+    usage: "/portfolio"
+    access: "all"
+  
+  positions:
+    description: "List all open positions"
+    usage: "/positions"
+    access: "all"
+  
+  trades:
+    description: "Show recent trades"
+    usage: "/trades [limit]"
+    access: "all"
+  
+  pnl:
+    description: "Show profit and loss summary"
+    usage: "/pnl [daily|weekly|monthly]"
+    access: "all"
+  
+  balance:
+    description: "Check wallet balance"
+    usage: "/balance"
+    access: "all"
+  
+  # GMGN Commands
+  gmgn_token:
+    description: "Get token info (symbol, price, holders, security)"
+    usage: "/gmgn_token <token_address>"
+    access: "all"
+  
+  gmgn_market:
+    description: "Get market data (K-line, trending tokens)"
+    usage: "/gmgn_market [chain] [interval]"
+    access: "all"
+  
+  gmgn_portfolio:
+    description: "View wallet holdings and activity"
+    usage: "/gmgn_portfolio <wallet_address>"
+    access: "all"
+  
+  gmgn_track:
+    description: "Track wallet, KOL, or Smart Money trades"
+    usage: "/gmgn_track <wallet_address>"
+    access: "all"
+  
+  gmgn_swap:
+    description: "Execute market/limit/strategy orders"
+    usage: "/gmgn_swap <token> <amount>"
+    access: "admin"
+  
+  gmgn_cooking:
+    description: "One-command buy with TP/SL orders"
+    usage: "/gmgn_cooking <token> <amount> <tp_percent> <sl_percent>"
+    access: "admin"
+  
+  # Strategy Management
+  strategies:
+    description: "List all available strategies"
+    usage: "/strategies"
+    access: "all"
+  
+  strategy_status:
+    description: "Check status of a specific strategy"
+    usage: "/strategy_status <strategy_name>"
+    access: "all"
+  
+  enable_strategy:
+    description: "Enable a strategy"
+    usage: "/enable_strategy <strategy_name>"
+    access: "admin"
+  
+  disable_strategy:
+    description: "Disable a strategy"
+    usage: "/disable_strategy <strategy_name>"
+    access: "admin"
+  
+  # Pump.fun Sniper
+  sniper_status:
+    description: "Check Pump.fun sniper status"
+    usage: "/sniper_status"
+    access: "admin"
+  
+  sniper_start:
+    description: "Start Pump.fun sniper"
+    usage: "/sniper_start"
+    access: "admin"
+  
+  sniper_stop:
+    description: "Stop Pump.fun sniper"
+    usage: "/sniper_stop"
+    access: "admin"
+  
+  sniper_config:
+    description: "Configure sniper parameters"
+    usage: "/sniper_config <param> <value>"
+    access: "admin"
+  
+  # Risk Management
+  risk:
+    description: "View risk dashboard"
+    usage: "/risk"
+    access: "admin"
+  
+  risk_update:
+    description: "Update risk parameters"
+    usage: "/risk_update <param> <value>"
+    access: "admin"
+  
+  # Alerts
+  alerts:
+    description: "Manage alerts"
+    usage: "/alerts [list|add|remove]"
+    access: "all"
+  
+  # Admin Commands
+  stop:
+    description: "Stop all trading (emergency)"
+    usage: "/stop"
+    access: "admin"
+  
+  restart:
+    description: "Restart the bot"
+    usage: "/restart"
+    access: "admin"
+  
+  logs:
+    description: "View bot logs"
+    usage: "/logs [lines]"
+    access: "admin"
+  
+  config:
+    description: "View/modify configuration"
+    usage: "/config [get|set]"
+    access: "admin"
+  
+  test:
+    description: "Test API connections"
+    usage: "/test"
+    access: "admin"
+
+# Admin Users (Telegram User IDs)
+admins:
+  - 7764037225  # Solxhunter X100
+
+# Strategy List
+strategies:
+  - name: "multi_strategy_portfolio"
+    description: "Multi-Strategy Portfolio Manager"
+    enabled: true
+    
+  - name: "hybrid_signal_aggregator"
+    description: "Hybrid Signal Aggregator"
+    enabled: true
+    
+  - name: "ai_pattern_recognition"
+    description: "AI-Driven Pattern Recognition"
+    enabled: true
+    
+  - name: "advanced_risk_dashboard"
+    description: "Advanced Risk Dashboard"
+    enabled: true
+    
+  - name: "social_signal_amplifier"
+    description: "Social Signal Amplifier"
+    enabled: true
+    
+  - name: "pumpfun_sniper"
+    description: "Automated Snipe Bot (Pump.fun)"
+    enabled: true
+    
+  - name: "portfolio_auto_rebalancer"
+    description: "Portfolio Auto-Rebalancer"
+    enabled: true
+    
+  - name: "smart_money_copy_trade"
+    description: "Smart Money Copy Trade System"
+    enabled: true
+    
+  - name: "time_based_scheduler"
+    description: "Time-Based Strategy Scheduler"
+    enabled: true
