@@ -1,5 +1,11 @@
+interface Connection {
+  name: string;
+  status: string;
+  color: string;
+}
+
 export default function APIConnections() {
-  const connections = [
+  const connections: Connection[] = [
     { name: 'Telegram Bot', status: 'connected', color: 'bg-green-500' },
     { name: 'Solana Wallet', status: 'connected', color: 'bg-green-500' },
     { name: 'GMGN API', status: 'configured', color: 'bg-blue-500' },

@@ -1,5 +1,14 @@
+import { ReactNode } from 'react'
+
+interface StatItem {
+  label: string;
+  value: string;
+  change?: string;
+  color: string;
+}
+
 export default function DashboardStats() {
-  const stats = [
+  const stats: StatItem[] = [
     { label: 'Portfolio Value', value: '$0.00', change: '+0%', color: 'text-solana-green' },
     { label: 'Today's P&L', value: '$0.00', change: '0%', color: 'text-gray-400' },
     { label: 'Active Positions', value: '0', change: '', color: 'text-white' },
