@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const envVars = {
+  const envVars: Record<string, string | undefined> = {
     GMGN_API_KEY: process.env.GMGN_API_KEY,
     JUPITER_API_KEY: process.env.JUPITER_API_KEY,
     BIRDEYE_API_KEY: process.env.BIRDEYE_API_KEY,
@@ -16,9 +16,6 @@ export async function GET() {
     STOP_LOSS_PERCENT: process.env.STOP_LOSS_PERCENT,
     TAKE_PROFIT_PERCENT: process.env.TAKE_PROFIT_PERCENT,
   };
-
-  // Log all env vars for debugging (in production this will be safe)
-  console.log('Health check - Env vars:', Object.keys(envVars).filter(k => envVars[k]));
 
   return NextResponse.json({
     status: 'ok',
