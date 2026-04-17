@@ -25,7 +25,7 @@ export async function GET() {
         });
 
         if (response.ok) {
-          const data = await response.json();
+          const data: any = await response.json();
           const trades = data?.data?.items?.map((tx: any) => ({
             id: tx.tx_hash,
             timestamp: new Date(tx.block_time * 1000).toISOString(),

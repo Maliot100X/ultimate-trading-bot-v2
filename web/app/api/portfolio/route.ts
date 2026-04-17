@@ -54,14 +54,14 @@ export async function GET() {
     });
 
     const tokenData = await tokenResponse.json();
-    const tokenAccounts = tokenData?.result?.value || [];
+    const tokenAccounts: any[] = tokenData?.result?.value || [];
 
     return NextResponse.json({
       success: true,
       publicKey,
       balance: balanceSol.toFixed(4),
       balanceUsd: balanceUsd.toFixed(2),
-      tokens: tokenAccounts.map(acc => ({
+      tokens: tokenAccounts.map((acc: any) => ({
         address: acc.account.data.parsed.info.mint,
         symbol: 'TOKEN',
         name: 'Token',
