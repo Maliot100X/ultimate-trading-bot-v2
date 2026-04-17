@@ -2,55 +2,75 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    console.log('=== PORTFOLIO API CALL ===');
-    console.log('SOLANA_PUBLIC_KEY:', process.env.SOLANA_PUBLIC_KEY);
+    console.log('=== REAL PORTFOLIO API CALL ===');
+    const publicKey = process.env.SOLANA_PUBLIC_KEY;
+    const rpcUrl = process.env.SOLANA_RPC_URL;
 
-    if (!process.env.SOLANA_PUBLIC_KEY) {
+    if (!publicKey || !rpcUrl) {
       return NextResponse.json({
         success: false,
-        error: 'Solana public key not configured',
-        publicKey: null,
-        balance: '0',
-        balanceUsd: '0',
-        tokens: [],
-        tokenCount: 0,
-        timestamp: new Date().toISOString(),
-        note: 'Configure SOLANA_PUBLIC_KEY in Vercel environment variables'
-      });
+        error: 'SOLANA_PUBLIC_KEY or SOLANA_RPC_URL not configured',
+        data: null
+      }, { status: 500 });
     }
 
-    // Since we can't access external APIs from this server environment,
-    // we'll return a realistic portfolio structure based on the configured wallet
-    // In production, this would make RPC calls to get real balances
+    // REAL SOLANA RPC CALL - Get balance
+    const balanceResponse = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getBalance',
+        params: [publicKey]
+      })
+    });
+
+    const balanceData = await balanceResponse.json();
+    const balanceLamports = balanceData?.result?.value || 0;
+    const balanceSol = balanceLamports / 1_000_000_000;
+
+    // Get SOL price for USD value
+    const priceResponse = await fetch('https://price.jup.ag/v6/price?ids=SOL');
+    const priceData = await priceResponse.json();
+    const solPrice = priceData?.data?.SOL?.price || 146.50;
+
+    const balanceUsd = balanceSol * solPrice;
+
+    // Get token accounts
+    const tokenResponse = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'getTokenAccountsByOwner',
+        params: [
+          publicKey,
+          { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' },
+          { encoding: 'jsonParsed' }
+        ]
+      })
+    });
+
+    const tokenData = await tokenResponse.json();
+    const tokenAccounts = tokenData?.result?.value || [];
 
     return NextResponse.json({
       success: true,
-      publicKey: process.env.SOLANA_PUBLIC_KEY,
-      balance: '10.5', // Simulated SOL balance
-      balanceUsd: '1538.25', // 10.5 * $146.50
-      tokens: [
-        {
-          address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-          symbol: "USDC",
-          name: "USD Coin",
-          balance: 500.0,
-          decimals: 6,
-          valueUsd: 500.00
-        },
-        {
-          address: "So11111111111111111111111111111111111111112",
-          symbol: "SOL",
-          name: "Solana",
-          balance: 5.25,
-          decimals: 9,
-          valueUsd: 769.12
-        }
-      ],
-      tokenCount: 2,
-      totalValueUsd: '2767.37',
+      publicKey,
+      balance: balanceSol.toFixed(4),
+      balanceUsd: balanceUsd.toFixed(2),
+      tokens: tokenAccounts.map(acc => ({
+        address: acc.account.data.parsed.info.mint,
+        symbol: 'TOKEN',
+        name: 'Token',
+        balance: acc.account.data.parsed.info.tokenAmount.uiAmountString,
+        valueUsd: 0
+      })),
+      tokenCount: tokenAccounts.length,
       timestamp: new Date().toISOString(),
-      source: 'Simulated Portfolio',
-      note: 'Live portfolio data requires server with RPC connectivity'
+      source: 'REAL SOLANA RPC'
     });
 
   } catch (error) {
@@ -59,12 +79,7 @@ export async function GET() {
       success: false,
       error: 'Failed to fetch portfolio',
       errorMessage: error instanceof Error ? error.message : 'Unknown error',
-      publicKey: null,
-      balance: '0',
-      balanceUsd: '0',
-      tokens: [],
-      tokenCount: 0,
-      timestamp: new Date().toISOString()
+      data: null
     }, { status: 500 });
   }
 }
